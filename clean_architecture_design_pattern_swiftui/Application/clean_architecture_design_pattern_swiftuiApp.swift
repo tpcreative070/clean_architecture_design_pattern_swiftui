@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct clean_architecture_design_pattern_swiftuiApp: App {
+    private let appFactory = AppFactory()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            AppCoordinatorView(
+                screenFactory: ScreenFactory(appFactory: appFactory),
+                coordinator: AppCoordinator(
+                    fetchProfileUseCase: appFactory.makeFetchProfileUseCase(),
+                    fetchFavoriteMoviesUseCase: appFactory.makeFetchFavoriteMoviesUseCase()
+                )
+            )
+            .preferredColorScheme(.dark)
+            .onAppear {
+                NetworkMonitor.shared.startMonitoring()
+            }
         }
     }
 }
